@@ -1,5 +1,4 @@
 namegenerator
 =============○
 
-Name Generator
-Это всё очень странно...
+Name Generator - my first program. Learning git here.
