@@ -15,8 +15,15 @@ public class CmdArguments implements Serializable {
     @Option(name = "--count", usage = "How much names do we need")
     private int count = 5;
 
-    public String getGender() {
-        return gender;
+    public Genders getGender() {
+        switch (Character.toLowerCase(gender.charAt(0))) {
+            case 'm':
+                return Genders.MALE;
+            case 'f':
+                return Genders.FEMALE;
+            default:
+                return Genders.BOTH;
+        }
     }
 
     public byte getLength() {

@@ -1,9 +1,7 @@
 package com.kapahgaiii;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
@@ -12,7 +10,7 @@ import java.util.Set;
 public class Engine {
     private char[] russianAlphabet = {'а', 'е', 'и', 'к', 'л', 'м', 'н', 'о', 'п', 'р', 'с', 'т'}; //most-used characters
     private HashMap<String, Segment> data = new HashMap<String, Segment>();//our char-links
-    Random randomizer = new Random(System.nanoTime());
+    Random randomizer = new Random();
 
     public class Segment { //pair of characters with the list of possible next chars
         String subs;
@@ -25,8 +23,8 @@ public class Engine {
     }
 
     public Engine() {
-        readData("male_names.txt");
-        readData("female_names.txt");
+        readData(Genders.MALE.getSrc());
+        readData(Genders.FEMALE.getSrc());
     }
 
     public void readData(String filename) {
@@ -37,8 +35,8 @@ public class Engine {
                 s = s.toLowerCase();
                 for (int i = 0; i < s.length() - 2; i++) {
                     //get substrings
-                    String subs = s.substring(i, i + 2);
-                    String nextChar = s.substring(i + 2, i + 3);
+                    String subs = s.substring(i, i + 2);//our pair
+                    String nextChar = s.substring(i + 2, i + 3);//next char
                     //adding pair
                     if (!data.containsKey(subs)) {
                         data.put(subs, new Segment(subs));
@@ -49,17 +47,15 @@ public class Engine {
                     }
                     //adding ending
                     if (i == s.length() - 4) {
-                        String end = s.substring(i + 2);
+                        String end = s.substring(i + 2);//word ending
                         if (!data.get(subs).canBeEndWith.contains(end)) {
                             data.get(subs).canBeEndWith.add(end);
                         }
                     }
                 }
             }
-        } catch (FileNotFoundException e) {
-            System.out.println(e);
-        } catch (IOException e) {
-            System.out.println(e);
+        } catch (Exception e) {
+            System.err.println(e);
         }
     }
 
@@ -76,6 +72,17 @@ public class Engine {
     }
 
     public String generateName(int length) {
+        /*
+        * algorithm read list of Russian names and for all pairs of characters forms a lists of possible next chars
+        * and of possible word endings after this pair
+        * then word formation starts
+        * it takes random pair of characters, not starting with 'ь', 'ы' or 'ъ'
+        * then it takes random char from this pair's list
+        * then it similarly work with last 2 characters
+        * if some pair hasn't list of possible next chars next char takes randomly from the list of most-used chars
+        * at the last step it adds two chars at once, chars from the list "canBeEndWith"
+        * if list "canBeEndWith" it empty, it takes random pair
+        * */
         String name; //our result
 
         Object[] keys = data.keySet().toArray();

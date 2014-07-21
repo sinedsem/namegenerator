@@ -1,6 +1,5 @@
 package com.kapahgaiii;
 
-//import com.sun.scenario.CmdArguments;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -21,16 +20,13 @@ public class NameGenerator {
 
         Engine engine = new Engine();
 
-        if (cmdArguments.getGender().substring(0, 1).toLowerCase().equals("m")) {
-            engine.clearData();
-            engine.readData("male_names.txt");
-        } else if (cmdArguments.getGender().substring(0, 1).toLowerCase().equals("f")) {
-            engine.clearData();
-            engine.readData("female_names.txt");
+        if (cmdArguments.getGender() != Genders.BOTH) {//default loaded both. If not,
+            engine.clearData();//clear data and
+            engine.readData(cmdArguments.getGender().getSrc());//load only male or female
         }
 
         for (int i = 0; i < cmdArguments.getCount(); i++) {
-            System.out.println(engine.generateName(cmdArguments.getLength()));
+            View.print(engine.generateName(cmdArguments.getLength()));
         }
 
     }
